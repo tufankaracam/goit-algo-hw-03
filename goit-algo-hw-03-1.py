@@ -18,30 +18,52 @@ def copyFiles(src: Path, dst: Path):
                 print(f'{str(item)} is copied to {str(suffixpath)}')
 
 
+class SourceFolderNotExistsError(Exception):
+    def __init__(self):
+        super().__init__('Source folder not exists or not a folder')
+
+
+class DestinationFolderNotExistsError(Exception):
+    def __init__(self):
+        super().__init__('Destination folder not exists or not a folder')
+
+
+class SourceParameterError(Exception):
+    def __init__(self):
+        super().__init__('Source folder information required. Example : script.py "source folder"')
+
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser("File Copier")
-    parser.add_argument('src', help="Source Directory")
-    parser.add_argument(
-        '--dst', help="Destination Directory", default="./dist")
-    args = parser.parse_args()
-    src = Path(args.src)
-    dst = Path(args.dst)
+    try:
+        parser = argparse.ArgumentParser("File Copier")
+        parser.add_argument('--src', help="Source Directory")
+        parser.add_argument(
+            '--dst', help="Destination Directory")
+        args = parser.parse_args()
 
-    print(dst)
-
-    if not src.is_dir():
-        print('Source is not a directory!')
-        exit()
-
-    if not dst.exists() or not dst.is_dir():
-        if (args.dst == './dist'):
-            dst.mkdir()
+        if args.src is None or args.src == "":
+            raise SourceParameterError()
         else:
-            print('Destination is not a directory!')
-            exit()
+            src = Path(args.src)
 
-    copyFiles(src, dst)
+        if args.dst is None or args.dst == "":
+            dst = Path('./dist')
+            if not dst.exists():
+                dst.mkdir()
+        else:
+            dst = Path(args.dst)
 
+        if not src.exists() or not src.is_dir():
+            raise SourceFolderNotExistsError()
 
-# sudo python3 goit-algo-hw-03-1.py "src"
+        if not dst.exists() or not dst.is_dir():
+            raise DestinationFolderNotExistsError()
+
+        copyFiles(src, dst)
+        print('Files copied!')
+
+    except Exception as e:
+        print(e)
+
+# sudo python3 goit-algo-hw-03-1.py "src" -> Files will be copied same directory with script under "dist" folder.
 # sudo python3 goit-algo-hw-03-1.py "src dir" --dst "dst dir"

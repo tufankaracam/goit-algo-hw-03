@@ -1,4 +1,13 @@
 import turtle
+import os
+
+
+def clear_screen():
+    os_name = os.name
+    if os_name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
 
 
 def koch_curve(t, order, size):
@@ -10,10 +19,10 @@ def koch_curve(t, order, size):
             t.left(angle)
 
 
-def draw_koch_snowflake(order, size=300):
+def draw_koch_snowflake(order, size=150):
     window = turtle.Screen()
     window.bgcolor("white")
-
+    size = size * (order * 0.5)
     t = turtle.Turtle()
     t.speed(0)
     t.penup()
@@ -27,4 +36,13 @@ def draw_koch_snowflake(order, size=300):
     window.mainloop()
 
 
-draw_koch_snowflake(5, 300)
+if __name__ == '__main__':
+    while True:
+        recursion_level = input("Please enter recursion level: ")
+        if recursion_level.isdigit():
+            recursion_level = int(recursion_level)
+            draw_koch_snowflake(recursion_level, 150)
+            break
+        else:
+            input('You need to enter number!')
+            clear_screen()
